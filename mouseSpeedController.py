@@ -1,27 +1,66 @@
 import pynput
 import math
+import time
 
-class cursor():
+class cursorController():
 		
-	def __init__(self, maxDistancePerAxis=5, timeInterval=0.05):
-		self.maxDistancePerAxis= maxDistancePerAxis #the maximum distance moved in each axis in the given time period before the program starts to cap speed
-		self.maxDistance= math.sqrt(2) * maxDistancePerAxis
-		self.timeInterval= timeInterval #1/sample rate
-
-	def getMousePosition(self):
-		#update self.x and self.y
+	def __init__(self, sampleRate=60, speed=500):
+		self.timeInterval= 1/sampleRate
+		self.mouse=pynput.mouse.Controller()
+		self.maxDistancePerAxis= speed * self.timeInterval
+		self.maxDistance= math.sqrt(2) * self.maxDistancePerAxis
 
 	def getMouseDistanceMoved(self):
-		#calls getMousePosition twice with a small interval inbetween and uses pythagorus to work out the distance moved
+		#calls getMousePosition twice with a small interval inbetween
+		
+		self.prevX, self.prevY = self.mouse.position
 
-	def capMouseSpeed(self):
+		time.sleep(self.timeInterval)
+		
+		self.x, self.y = self.mouse.position
+		
+	def capMouseSpeed(self, speed=500):# maxDistancePerAxis is the maximum distance moved in each axis in the given time period before the program starts to cap speed
+                
 		#call getMouseDistanceMoved, if the distance moved is larger than what you want (maxDistance), then:
-		#for the axis in which the cursor moved the most, self.[other axis]= self.[other axis] * maxDistancePerAxis/self.[the axis] 
-		#and self.[the axis]= maxDistancePerAxis (which is the same thing as self.[the axis]= self.[the axis] * maxDistancePerAxis/self.[the axis])
+		#for the axis in which the cursor moved the most, (change in self.[other axis])= (change in self.[other axis]) * maxDistancePerAxis/(change in self.[the axis]) 
+		#and change in self.[the axis]= maxDistancePerAxis (which is the same thing as (change in self.[the axis])= (change in self.[the axis]) * maxDistancePerAxis/(change in self.[the axis]))
 		#the idea is that you want to scale down the movement in each axis by the same amount to ensure that direction is preserved
-		#make sure to round to the nearest int
 
-	def updateMousePosition(self):
-		#uses pynput to update the position of the mouse to self.x and self.y 
+		self.getMouseDistanceMoved()
+
+		#best if this whole thing after was run in a separate thread so that it doesnt change time between samples.
+		
+		changeX= self.x - self.prevX
+		changeY= self.y - self.prevY
+		
+		distanceMoved= math.sqrt((self.x-self.prevX)*(self.x-self.prevX)+(self.y-self.prevY)*(self.y-self.prevY))
+
+		if distanceMoved > self.maxDistance:
+
+			try:
+				if abs(changeX) > abs(changeY):
+                                        
+					self.y= self.prevY + changeY * self.maxDistancePerAxis/abs(changeX)
+					self.x= self.prevX + changeX * self.maxDistancePerAxis/abs(changeX)
+				
+				if abs(changeY) > abs(changeX):
+                                        
+					self.x= self.prevX + changeX * self.maxDistancePerAxis/abs(changeY)
+					self.y= self.prevY + changeY * self.maxDistancePerAxis/abs(changeY)
+					
+			except Exception as ex:
+				print(ex)	
+			finally:
+				
+				self.mouse.position = (self.x, self.y)
+
+mouse=cursorController()
+
+while True:
+	
+	mouse.capMouseSpeed()
+		
+
+
 
 
