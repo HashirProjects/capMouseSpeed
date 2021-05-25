@@ -7,8 +7,7 @@ class cursorController():
 	def __init__(self, sampleRate=60, speed=500):
 		self.timeInterval= 1/sampleRate
 		self.mouse=pynput.mouse.Controller()
-		self.maxDistancePerAxis= speed * self.timeInterval # maxDistancePerAxis is the maximum distance moved in each axis in the given time period before the program starts to cap speed
-		self.maxDistance= math.sqrt(2) * self.maxDistancePerAxis
+		self.maxDistance= speed * self.timeInterval # maxDistance is the maximum distance moved in each axis in the given time period before the program starts to cap speed
 
 	def getMouseDistanceMoved(self):
 		#calls getMousePosition twice with a small interval inbetween
@@ -38,13 +37,13 @@ class cursorController():
 			try:
 				if abs(changeX) > abs(changeY):
                                         
-					self.y= self.prevY + changeY * self.maxDistancePerAxis/abs(changeX)
-					self.x= self.prevX + changeX * self.maxDistancePerAxis/abs(changeX)
+					self.y= self.prevY + changeY * self.maxDistance/abs(changeX)
+					self.x= self.prevX + changeX * self.maxDistance/abs(changeX)
 				
 				if abs(changeY) > abs(changeX):
                                         
-					self.x= self.prevX + changeX * self.maxDistancePerAxis/abs(changeY)
-					self.y= self.prevY + changeY * self.maxDistancePerAxis/abs(changeY)
+					self.x= self.prevX + changeX * self.maxDistance/abs(changeY)
+					self.y= self.prevY + changeY * self.maxDistance/abs(changeY)
 					
 			except Exception as ex:
 				print(ex)	
