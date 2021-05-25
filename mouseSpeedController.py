@@ -21,8 +21,8 @@ class cursorController():
 	def capMouseSpeed(self):
                 
 		#call getMouseDistanceMoved, if the distance moved is larger than what you want (maxDistance), then:
-		#for the axis in which the cursor moved the most, (change in self.[other axis])= (change in self.[other axis]) * maxDistancePerAxis/(change in self.[the axis]) 
-		#and change in self.[the axis]= maxDistancePerAxis (which is the same thing as (change in self.[the axis])= (change in self.[the axis]) * maxDistancePerAxis/(change in self.[the axis]))
+		#for the axis in which the cursor moved the most, (change in self.[other axis])= (change in self.[other axis]) * maxDistance/(change in self.[the axis]) 
+		#and change in self.[the axis]= maxDistancePerAxis (which is the same thing as (change in self.[the axis])= (change in self.[the axis]) * maxDistance/(change in self.[the axis]))
 		#the idea is that you want to scale down the movement in each axis by the same amount to ensure that direction is preserved
 
 		self.getMouseDistanceMoved()

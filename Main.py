@@ -2,7 +2,7 @@ from mouseSpeedController import cursorController
 import threading
 
 def runCapMouseSpeedThread(finish):
-        mouse=cursorController()#you can change the params if u want but default values have been set
+        mouse=cursorController(sampleRate= 100)#you can change the params if u want but default values have been set
         while finish[0]:
                 mouse.capMouseSpeed()
 finish= [True]
